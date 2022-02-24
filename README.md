@@ -1,2 +1,3 @@
 # browser-jsunit
-A unit test framework that launches the unit test in the same page.
+
+A unit test framework that launches the unit tests in the same page.

@@ -1,4 +1,5 @@
 function computeFB(n) {
+	//if (n==3) return "fizz"
     return n;
 }
 
@@ -12,7 +13,7 @@ function printResult() {
 }
 
 function loadBehavior() {
-  document.getElementById("exec").addEventListener('click', () => printResult())
+    document.getElementById("exec").addEventListener('click', () => printResult())
 }
 
 window.addEventListener('load', () => loadBehavior());
@@ -30,3 +31,22 @@ function testThreeShouldReturnFizz() {
     testCase.assertEquals("fizz", computeFB(3));
 }
 
+function testShouldRaiseAnError() {
+    testCase.assertEquals(null, undefined.getFoo());
+}
+
+/**
+ * Unit test unit test (for kevin)
+ */
+
+function testOneShouldReturnOneShouldWork() {
+	testCase.assertEquals("ok", document.getElementsByTagName("ul")[0].children[0].className)	 
+}
+
+function testThreeShouldReturnFizzShouldFail() {
+	testCase.assertEquals("ko", document.getElementsByTagName("ul")[0].children[1].className)	 
+}
+
+function testShouldRaiseAnErrorShouldRaiseAnError() {
+	testCase.assertEquals("error", document.getElementsByTagName("ul")[0].children[2].className)	 
+}
