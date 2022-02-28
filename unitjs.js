@@ -6,7 +6,17 @@ class TestResult {
 		this.testName = testName
 		this.expected = expected
 		this.actual = actual
+        this.order = undefined
+        this.label = this.testName
 	}
+
+    computeOrder(testCounts) {
+        this.order = (testCounts[this.testName] ? testCounts[this.testName] : 0) + 1
+        testCounts[this.testName] = this.order
+        if (this.order > 1) {
+            this.label += "-"+this.order
+        }
+    }
 }
 
 class TestCase {
@@ -14,6 +24,7 @@ class TestCase {
     constructor() {
         this.currentTestName = undefined;
         this.testResults = []
+        this.testCounts = new Map()
         this.appendCSS()
 		this.resultArea = this.insertTestResultArea()
     }
@@ -38,9 +49,19 @@ class TestCase {
     assertEquals(expected, actual) {
         this.addTestResult(new TestResult(false, expected == actual, currentTestName, expected, actual))
     }
+
+    clickOnId(id) {
+        document.getElementById(id).click()
+    }
+
+    assertTextContentContains(id, expected) {
+        let actual = document.getElementById(id).textContent
+        this.addTestResult(new TestResult(false, actual.search(expected) >= 0, currentTestName, expected, actual))
+    }
 	
 	addTestResult(testResult) {
 		this.testResults.push(testResult)
+        testResult.computeOrder(this.testCounts)
 		this.printTestResult(testResult)	
 	}
 	
@@ -51,23 +72,24 @@ class TestCase {
 	
 	printTestResult(testResult) {
 		if (testResult.isError) {
-            this.resultArea.appendChild(this.bullet("error", "Test ", ...this.mark(testResult.testName), 
+            this.resultArea.appendChild(this.bullet(testResult.label, "error", "Test ", ...this.mark(testResult.label), 
                 " throws an error: ", ...this.mark(testResult.actual)))
         }
 		else if (testResult.isOk) {
-            this.resultArea.appendChild(this.bullet("ok", "Test ", ...this.mark(testResult.testName), " OK."))
+            this.resultArea.appendChild(this.bullet(testResult.label, "ok", "Test ", ...this.mark(testResult.label), " OK."))
         }
         else {
-            this.resultArea.appendChild(this.bullet("ko", "Test ", ...this.mark(testResult.testName), " KO: ",
+            this.resultArea.appendChild(this.bullet(testResult.label, "ko", "Test ", ...this.mark(testResult.label), " KO: ",
             "expected: ", ...this.mark(testResult.expected), " actual: ", ...this.mark(testResult.actual)))
         }
 	}
 
     mark(...content) { return ["<mark>", ...content, "</mark>"]}
     
-    bullet(klass, ...content) { 
+    bullet(id, klass, ...content) { 
         let li = document.createElement("li")
         li.className = klass
+        li.id = id
         li.innerHTML = content.join("")
         return li
     }
@@ -90,4 +112,3 @@ window.addEventListener("load", () => {
 	
 	testCase.printTestResults()
 })
-
